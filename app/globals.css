@@ -2037,3 +2037,189 @@ img {
   margin: 0.3rem 0 0;
   color: var(--color-text-muted);
 }
+
+/* premium iteration overrides */
+.portal-title {
+  max-width: 14ch;
+  font-size: clamp(2rem, 4.4vw, 4rem);
+  line-height: 1.05;
+  text-wrap: balance;
+}
+
+.portal-lead {
+  max-width: 44rem;
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.workspace-header h2,
+.workspace-header h3,
+.policy-canvas h3,
+.workspace-detail-panel h3,
+.workspace-list-panel h3,
+.mini-diagram-header h2 {
+  text-wrap: balance;
+}
+
+.journey-swimlane-board {
+  display: grid;
+  gap: 1rem;
+}
+
+.journey-swimlane {
+  padding: 1rem;
+  border-radius: 1.2rem;
+  border: 1px solid rgba(219, 228, 238, 0.92);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(249, 250, 251, 0.98));
+  box-shadow: var(--shadow-sm);
+  border-left-width: 5px;
+}
+
+.journey-swimlane[data-active="true"] {
+  box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+}
+
+.journey-swimlane-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 0.9rem;
+}
+
+.journey-swimlane-track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(15rem, 1fr);
+  gap: 0.8rem;
+  overflow-x: auto;
+  padding-bottom: 0.35rem;
+}
+
+.journey-swimlane-segment {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.7rem;
+  align-items: center;
+}
+
+.journey-node-tone {
+  display: inline-flex;
+  margin-bottom: 0.45rem;
+  color: var(--color-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.journey-node-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 2.3rem;
+}
+
+.journey-node-arrow span {
+  width: 1.4rem;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(23, 23, 23, 0.12), rgba(212, 175, 55, 0.4));
+}
+
+.journey-node-arrow .icon {
+  color: var(--color-secondary);
+}
+
+.ia-blueprint-board {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(14rem, 0.75fr) minmax(0, 1fr);
+  gap: 1rem;
+  align-items: center;
+}
+
+.ia-column {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.ia-column-header p {
+  margin: 0.35rem 0 0;
+  color: var(--color-text-muted);
+}
+
+.ia-node-stack {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.ia-core-column {
+  display: grid;
+  gap: 0.8rem;
+  align-items: center;
+  justify-items: center;
+}
+
+.ia-core-bridges {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.ia-core-bridges span {
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(23, 23, 23, 0.12), rgba(212, 175, 55, 0.34));
+}
+
+.surface-orbit-node {
+  position: static;
+  width: auto;
+}
+
+.surface-orbit-node[data-tone="visible"] {
+  border-left: 4px solid rgba(37, 99, 235, 0.5);
+}
+
+.surface-orbit-node[data-tone="hidden"] {
+  border-left: 4px solid rgba(245, 158, 11, 0.55);
+}
+
+.mini-diagram-header h2 {
+  margin: 0;
+}
+
+@media (max-width: 1279px) {
+  .journey-swimlane-meta,
+  .ia-blueprint-board {
+    grid-template-columns: 1fr;
+  }
+
+  .journey-swimlane-meta {
+    flex-direction: column;
+  }
+
+  .ia-core-bridges {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  .journey-swimlane-track {
+    grid-auto-flow: row;
+    grid-auto-columns: unset;
+  }
+
+  .journey-swimlane-segment {
+    grid-template-columns: 1fr;
+  }
+
+  .journey-node-arrow {
+    display: none;
+  }
+
+  .ia-blueprint-board {
+    grid-template-columns: 1fr;
+  }
+}

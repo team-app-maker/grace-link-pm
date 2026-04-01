@@ -73,7 +73,7 @@ export function JourneyExplorer({ lanes }: { lanes: JourneyLane[] }) {
       <div className="workspace-header">
         <div>
           <span className="eyebrow">Interactive Journey</span>
-          <h2>유저플로우를 단계별로 읽는 워크스페이스</h2>
+          <h2>user-flow 단위로 나눈 실제 Journey 설계도</h2>
         </div>
         <SourceLink link={lane.source} />
       </div>
@@ -98,39 +98,67 @@ export function JourneyExplorer({ lanes }: { lanes: JourneyLane[] }) {
         ))}
       </div>
 
-      <div className="workspace-stats-row">
-        <div className="workspace-stat-pill">
-          <ShieldIcon className="icon" />
-          <span>Gate {countSteps(lane, "gate")}</span>
-        </div>
-        <div className="workspace-stat-pill">
-          <SparkIcon className="icon" />
-          <span>Action {countSteps(lane, "action")}</span>
-        </div>
-        <div className="workspace-stat-pill">
-          <BranchIcon className="icon" />
-          <span>Risk {countSteps(lane, "warning")}</span>
-        </div>
-      </div>
-
       <div className="workspace-grid workspace-grid-journey">
-        <div className="journey-interactive-map">
-          {lane.steps.map((item, index) => (
-            <button
-              key={`${lane.title}-${item.label}`}
-              className="journey-node"
-              type="button"
-              data-active={stepIndex === index}
-              data-tone={item.emphasis ?? "default"}
-              onClick={() => setStepIndex(index)}
+        <div className="journey-swimlane-board">
+          {lanes.map((currentLane, currentLaneIndex) => (
+            <article
+              key={currentLane.title}
+              className="journey-swimlane"
+              data-active={laneIndex === currentLaneIndex}
+              style={{ borderColor: currentLane.accent }}
             >
-              <span className="journey-node-index">{String(index + 1).padStart(2, "0")}</span>
-              <div className="journey-node-body">
-                <strong>{item.label}</strong>
-                {item.route ? <code>{item.route}</code> : null}
-                <p>{item.summary}</p>
+              <div className="journey-swimlane-meta">
+                <div>
+                  <span className="journey-lane-title">{currentLane.title}</span>
+                  <p>{currentLane.summary}</p>
+                </div>
+                <div className="workspace-stats-row">
+                  <div className="workspace-stat-pill">
+                    <ShieldIcon className="icon" />
+                    <span>Gate {countSteps(currentLane, "gate")}</span>
+                  </div>
+                  <div className="workspace-stat-pill">
+                    <SparkIcon className="icon" />
+                    <span>Action {countSteps(currentLane, "action")}</span>
+                  </div>
+                  <div className="workspace-stat-pill">
+                    <BranchIcon className="icon" />
+                    <span>Risk {countSteps(currentLane, "warning")}</span>
+                  </div>
+                </div>
               </div>
-            </button>
+
+              <div className="journey-swimlane-track" role="list" aria-label={currentLane.title}>
+                {currentLane.steps.map((item, index) => (
+                  <div className="journey-swimlane-segment" key={`${currentLane.title}-${item.label}`} role="listitem">
+                    <button
+                      className="journey-node"
+                      type="button"
+                      data-active={laneIndex === currentLaneIndex && stepIndex === index}
+                      data-tone={item.emphasis ?? "default"}
+                      onClick={() => {
+                        setLaneIndex(currentLaneIndex);
+                        setStepIndex(index);
+                      }}
+                    >
+                      <span className="journey-node-index">{String(index + 1).padStart(2, "0")}</span>
+                      <div className="journey-node-body">
+                        <span className="journey-node-tone">{getStepToneLabel(item.emphasis)}</span>
+                        <strong>{item.label}</strong>
+                        {item.route ? <code>{item.route}</code> : null}
+                        <p>{item.summary}</p>
+                      </div>
+                    </button>
+                    {index < currentLane.steps.length - 1 ? (
+                      <div className="journey-node-arrow" aria-hidden="true">
+                        <span />
+                        <ArrowRightIcon className="icon" />
+                      </div>
+                    ) : null}
+                  </div>
+                ))}
+              </div>
+            </article>
           ))}
         </div>
 
@@ -183,57 +211,80 @@ export function IaExplorer({
   issues: { title: string; detail: string }[];
   recommendations: { title: string; detail: string }[];
 }) {
-  const [mode, setMode] = useState<"visible" | "hidden">("visible");
-  const [selectedName, setSelectedName] = useState<string>(visible[0]?.name ?? "");
-
-  const activeItems = mode === "visible" ? visible : hidden;
-  const selected =
-    activeItems.find((item) => item.name === selectedName) ?? activeItems[0] ?? visible[0] ?? hidden[0];
+  const [selectedName, setSelectedName] = useState<string>(visible[0]?.name ?? hidden[0]?.name ?? "");
+  const allItems = [...visible, ...hidden];
+  const selected = allItems.find((item) => item.name === selectedName) ?? allItems[0];
+  const selectedTone = hidden.some((item) => item.name === selected?.name) ? "hidden" : "visible";
 
   return (
     <section className="workspace-card surface">
       <div className="workspace-header">
         <div>
           <span className="eyebrow">Interactive IA</span>
-          <h2>노출 구조와 숨김 구조를 한 화면에서 비교</h2>
-        </div>
-        <div className="workspace-toggle-row" role="tablist" aria-label="IA surface mode">
-          <button type="button" className="workspace-toggle" data-active={mode === "visible"} onClick={() => { setMode("visible"); setSelectedName(visible[0]?.name ?? ""); }}>
-            Visible
-          </button>
-          <button type="button" className="workspace-toggle" data-active={mode === "hidden"} onClick={() => { setMode("hidden"); setSelectedName(hidden[0]?.name ?? ""); }}>
-            Hidden critical
-          </button>
+          <h2>visible navigation과 hidden core를 동시에 보는 IA 설계도</h2>
         </div>
       </div>
 
       <div className="workspace-grid workspace-grid-ia">
-        <div className="surface-orbit-board">
-          {activeItems.map((item) => (
-            <button
-              key={`${mode}-${item.name}`}
-              type="button"
-              className="surface-orbit-node"
-              data-active={selected?.name === item.name}
-              data-tone={mode}
-              onClick={() => setSelectedName(item.name)}
-            >
-              <span>{item.name}</span>
-              <small>{item.role}</small>
-            </button>
-          ))}
-          <div className="surface-orbit-core">
-            <CompassIcon className="icon" />
-            <strong>{mode === "visible" ? "User-facing IA" : "Hidden product core"}</strong>
-            <p>
-              {mode === "visible"
-                ? "현재 탭과 1차 메뉴에 보이는 구조"
-                : "지금 제품 가치와 BM에 직접 영향을 주지만 숨어 있는 구조"}
-            </p>
+        <div className="ia-blueprint-board">
+          <div className="ia-column">
+            <div className="ia-column-header">
+              <span className="journey-lane-title">Visible navigation</span>
+              <p>현재 사용자가 즉시 보는 표면 구조</p>
+            </div>
+            <div className="ia-node-stack">
+              {visible.map((item) => (
+                <button
+                  key={`visible-${item.name}`}
+                  type="button"
+                  className="surface-orbit-node"
+                  data-active={selected?.name === item.name}
+                  data-tone="visible"
+                  onClick={() => setSelectedName(item.name)}
+                >
+                  <span>{item.name}</span>
+                  <small>{item.role}</small>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="ia-core-column">
+            <div className="surface-orbit-core">
+              <CompassIcon className="icon" />
+              <strong>Experience structure</strong>
+              <p>브랜드 표면 · 행동 허브 · 과금 루프 · 운영 레이어의 충돌 지점을 해석합니다.</p>
+            </div>
+            <div className="ia-core-bridges" aria-hidden="true">
+              <span />
+              <span />
+            </div>
+          </div>
+
+          <div className="ia-column">
+            <div className="ia-column-header">
+              <span className="journey-lane-title">Hidden critical routes</span>
+              <p>가치와 BM은 큰데 1차 메뉴에서 보이지 않는 구조</p>
+            </div>
+            <div className="ia-node-stack">
+              {hidden.map((item) => (
+                <button
+                  key={`hidden-${item.name}`}
+                  type="button"
+                  className="surface-orbit-node"
+                  data-active={selected?.name === item.name}
+                  data-tone="hidden"
+                  onClick={() => setSelectedName(item.name)}
+                >
+                  <span>{item.name}</span>
+                  <small>{item.role}</small>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
-        {selected ? <SurfaceDetail item={selected} tone={mode} /> : null}
+        {selected ? <SurfaceDetail item={selected} tone={selectedTone} /> : null}
       </div>
 
       <div className="workspace-grid workspace-grid-2cols">
