@@ -15,6 +15,7 @@ import {
 import {
   type DirectoryView,
   type DocRouteResult,
+  getAllDocRouteSlugs,
   getNavigationTree,
   getSearchEntries,
   getSectionLabel,
@@ -35,6 +36,12 @@ const directoryIconMap = {
 type PageProps = {
   params: Promise<{ slug?: string[] }> | { slug?: string[] };
 };
+
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return getAllDocRouteSlugs().map((slug) => ({ slug }));
+}
 
 function DirectoryPanel({ view }: { view: DirectoryView }) {
   const Icon = directoryIconMap[view.sectionIcon];

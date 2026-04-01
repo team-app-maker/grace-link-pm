@@ -3,7 +3,7 @@ import path from "node:path";
 
 import { NextResponse } from "next/server";
 
-import { resolveAssetPath } from "@/lib/docs";
+import { getAllAssetRouteSlugs, resolveAssetPath } from "@/lib/docs";
 
 const MIME_TYPES: Record<string, string> = {
   ".png": "image/png",
@@ -17,6 +17,12 @@ const MIME_TYPES: Record<string, string> = {
 type RouteProps = {
   params: Promise<{ slug: string[] }> | { slug: string[] };
 };
+
+export const dynamicParams = false;
+
+export function generateStaticParams() {
+  return getAllAssetRouteSlugs().map((slug) => ({ slug }));
+}
 
 export async function GET(_request: Request, { params }: RouteProps) {
   const resolvedParams = await params;

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import rehypeRaw from "rehype-raw";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -30,6 +31,7 @@ export function DocMarkdown({ doc }: DocMarkdownProps) {
     <div className="doc-markdown">
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
+        rehypePlugins={[rehypeRaw]}
         components={{
           a: ({ node: _node, href = "", children, ...props }) => {
             if (href.startsWith("http://") || href.startsWith("https://")) {

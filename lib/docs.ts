@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const REPO_ROOT = path.join(/* turbopackIgnore: true */ process.cwd());
+const BASE_PATH = (process.env.NEXT_PUBLIC_BASE_PATH ?? "").replace(/\/$/, "");
 const ROOT_LEVEL_MARKDOWN = ["README.md"];
 const CONTENT_ROOTS = [
   "00-index",
@@ -232,6 +233,14 @@ function fileHref(relativePath: string) {
 
 function directoryHref(relativePath: string) {
   return relativePath ? `/docs/${relativePath}` : "/docs";
+}
+
+export function withBasePath(value: string) {
+  if (!value.startsWith("/")) {
+    return value;
+  }
+
+  return BASE_PATH ? `${BASE_PATH}${value}` : value;
 }
 
 function parseTitle(rawContent: string, fallback: string) {
@@ -528,7 +537,7 @@ export function resolveAssetHref(baseRelativePath: string, target: string) {
     return null;
   }
 
-  return `/asset/${resolved.resolvedPath}`;
+  return withBasePath(`/asset/${resolved.resolvedPath}`);
 }
 
 export function resolveAssetPath(slug: string[]) {
@@ -600,6 +609,61 @@ export function getFeaturedDocCards(paths: readonly string[]) {
       sectionTitle: getSectionLabel(doc.section),
     };
   });
+}
+
+function listDirectoriesUnder(relativePath: string): string[] {
+  const absolutePath = safeResolve(relativePath);
+  if (!absolutePath || !fs.existsSync(absolutePath)) {
+    return [];
+  }
+
+  return fs.readdirSync(absolutePath, { withFileTypes: true }).flatMap((entry) => {
+    if (!entry.isDirectory() || ["node_modules", ".git", ".next"].includes(entry.name)) {
+      return [];
+    }
+
+    const childRelativePath = toPosix(path.join(relativePath, entry.name));
+    if (!isIncluded(childRelativePath)) {
+      return [];
+    }
+
+    return [childRelativePath, ...listDirectoriesUnder(childRelativePath)];
+  });
+}
+
+export function getAllDocRouteSlugs() {
+  const routeSet = new Set<string>(["", "README"]);
+
+  for (const root of CONTENT_ROOTS) {
+    routeSet.add(root);
+    for (const directory of listDirectoriesUnder(root)) {
+      routeSet.add(directory);
+    }
+  }
+
+  for (const filePath of getAllMarkdownFiles()) {
+    routeSet.add(trimMd(filePath));
+  }
+
+  return Array.from(routeSet)
+    .sort((left, right) => left.localeCompare(right, "ko"))
+    .map((value) => (value ? value.split("/") : []));
+}
+
+export function getAllAssetRouteSlugs() {
+  const assetSet = new Set<string>();
+
+  for (const root of CONTENT_ROOTS) {
+    for (const file of listFilesUnder(root)) {
+      if (!file.endsWith(".md")) {
+        assetSet.add(file);
+      }
+    }
+  }
+
+  return Array.from(assetSet)
+    .sort((left, right) => left.localeCompare(right, "ko"))
+    .map((value) => value.split("/"));
 }
 
 export function resolveDocRoute(slug: string[]): DocRouteResult | null {

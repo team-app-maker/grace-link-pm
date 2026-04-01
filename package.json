@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "python3 -m http.server 3000 --directory out",
+    "preview": "python3 -m http.server 3000 --directory out",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "check:docs": "node scripts/validate-doc-links.mjs",
@@ -16,6 +17,7 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-markdown": "10.1.0",
+    "rehype-raw": "7.0.0",
     "remark-gfm": "4.0.1"
   },
   "devDependencies": {

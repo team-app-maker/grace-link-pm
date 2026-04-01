@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { KeyboardEvent } from "react";
 
@@ -30,6 +31,7 @@ function scoreEntry(entry: SearchEntry, query: string) {
 }
 
 export function SearchBox({ entries, variant }: SearchBoxProps) {
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
@@ -77,9 +79,11 @@ export function SearchBox({ entries, variant }: SearchBoxProps) {
     }
 
     if (event.key === "Enter") {
+      event.preventDefault();
       const selected = results[activeIndex];
       if (selected) {
-        window.location.href = selected.href;
+        router.push(selected.href);
+        setIsOpen(false);
       }
     }
 
