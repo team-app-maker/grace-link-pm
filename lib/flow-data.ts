@@ -258,3 +258,83 @@ export const iaBlueprint = {
     },
   ],
 };
+
+export type OverviewNode = {
+  id: string;
+  title: string;
+  route: string;
+  summary: string;
+  screenshot: string;
+  tone: "gate" | "action" | "warning" | "core" | "evidence";
+  x: number;
+  y: number;
+};
+
+export const overviewSystemMap = {
+  title: "Executive System Map",
+  summary: "GraceLink를 신뢰 게이트, 탐색, 응답, 대화, 재화, 운영 레이어로 읽는 한 장의 구조도",
+  sourceLabel: "현재 제품 PRD / 정책 / IA",
+  sourceHref: "/docs/01-product/unified-product-brief/",
+  nodes: [
+    {
+      id: "ov-login",
+      title: "Trust Gate",
+      route: "Login → PASS → Review",
+      summary: "승인 전까지 핵심 추천 경험을 닫아두는 신뢰 확보 단계입니다.",
+      screenshot: "/asset/03-mobile/docs/runtime-captures/ios/login-screen.png",
+      tone: "gate",
+      x: 24,
+      y: 210,
+    },
+    {
+      id: "ov-core",
+      title: "Core Discovery",
+      route: "Reco / Inbox / Chat",
+      summary: "추천, 응답, 채팅이 실제 관계 전환의 중심 루프를 구성합니다.",
+      screenshot: "/asset/03-mobile/docs/runtime-captures/ios/reco.png",
+      tone: "core",
+      x: 400,
+      y: 120,
+    },
+    {
+      id: "ov-inbox",
+      title: "Response Hub",
+      route: "Inbox 48h SLA",
+      summary: "수락/거절/만료가 48시간 안에 결정되는 응답 허브입니다.",
+      screenshot: "/asset/03-mobile/docs/runtime-captures/ios/inbox.png",
+      tone: "action",
+      x: 400,
+      y: 420,
+    },
+    {
+      id: "ov-chat",
+      title: "Conversation",
+      route: "Chat 24h SLA",
+      summary: "수락 후에만 열리고 24시간 규칙으로 관계 속도를 관리합니다.",
+      screenshot: "/asset/03-mobile/docs/runtime-captures/ios/chat-detail.png",
+      tone: "action",
+      x: 780,
+      y: 120,
+    },
+    {
+      id: "ov-shop",
+      title: "Economy Layer",
+      route: "Vault / Shop / Manna",
+      summary: "재진입과 과금, 광고 보상이 retention과 BM을 담당합니다.",
+      screenshot: "/asset/03-mobile/docs/runtime-captures/ios/shop.png",
+      tone: "warning",
+      x: 780,
+      y: 420,
+    },
+    {
+      id: "ov-admin",
+      title: "Ops & Safety",
+      route: "Report / Admin Review",
+      summary: "신고, 차단, 운영 심사 정책이 제품 안전 계층을 형성합니다.",
+      screenshot: "/asset/03-mobile/docs/runtime-captures/ios/admin.png",
+      tone: "warning",
+      x: 1160,
+      y: 270,
+    },
+  ],
+};
