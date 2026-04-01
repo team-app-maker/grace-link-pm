@@ -3,6 +3,17 @@
 GraceLink의 기획·SSOT·handoff·QA 문서를 분리 보관하는 PM 전용 레포입니다.
 이 레포는 2026-04-01 기준으로 `grace-link-RN`과 `grace-link-server`에서 기획 관련 문서를 이관해 구성했습니다.
 
+## Web documentation app
+
+이 레포는 이제 Next.js 기반 문서 웹앱을 함께 포함합니다.
+
+- 개발 서버: `npm run dev`
+- 프로덕션 빌드: `npm run build`
+- 프로덕션 실행: `npm run start`
+- 검증 일괄 실행: `npm run check`
+
+UI 기준은 `ui-ux-pro-max` 스킬로 생성한 `design-system/gracelink-pm/MASTER.md`를 따릅니다.
+
 ## Start here
 
 1. [`00-index/README.md`](00-index/README.md)
