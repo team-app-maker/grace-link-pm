@@ -1,12 +1,7 @@
 import Link from "next/link";
 
-import {
-  BlueprintMap,
-  PolicyMatrix,
-  PortalHero,
-  SectionFooterCta,
-  SourceBundles,
-} from "@/components/portal";
+import { PortalHero, PortalMiniDiagram, SectionFooterCta, SourceBundles } from "@/components/portal";
+import { PolicyExplorer, SystemExplorer } from "@/components/portal-workspace";
 import { blueprintColumns, policyGroups, sourceBundles } from "@/lib/portal-data";
 
 export default function PolicyPage() {
@@ -26,9 +21,20 @@ export default function PolicyPage() {
             </Link>
           </>
         }
+        aside={
+          <PortalMiniDiagram
+            title="Policy axes"
+            items={[
+              { label: "Access", detail: "APPROVED만 핵심 경험 진입 가능" },
+              { label: "Economy", detail: "추천/매칭/재진입이 만나 정책과 연결" },
+              { label: "SLA", detail: "48시간 응답, 24시간 채팅 종료 규칙" },
+              { label: "Safety", detail: "신고·차단·운영 심사·권한 흐름" },
+            ]}
+          />
+        }
       />
-      <PolicyMatrix groups={policyGroups} />
-      <BlueprintMap columns={blueprintColumns} />
+      <PolicyExplorer groups={policyGroups} />
+      <SystemExplorer columns={blueprintColumns} bundles={sourceBundles} />
       <SectionFooterCta
         href="/docs/06-active-changes/README/"
         label="Execution Layer"

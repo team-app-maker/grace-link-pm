@@ -1,27 +1,28 @@
 import Link from "next/link";
 
 import {
-  BlueprintMap,
-  CompactPolicyHighlights,
   FeatureRouteCards,
   HeroAnswerPanel,
-  JourneyMap,
   MetricStrip,
   NarrativeStrip,
   PillarBoard,
   PortalHero,
-  PortalLegend,
   SectionFooterCta,
   SectionSummaryPanel,
   SourceBundles,
 } from "@/components/portal";
+import { PortalWorkbench } from "@/components/portal-workspace";
 import {
   blueprintColumns,
+  hiddenSurfaces,
+  iaIssues,
   journeyLanes,
+  menuRecommendations,
   policyGroups,
   portalMetrics,
   productPillars,
   sourceBundles,
+  visibleSurfaces,
 } from "@/lib/portal-data";
 
 export default function HomePage() {
@@ -47,18 +48,24 @@ export default function HomePage() {
       <MetricStrip metrics={portalMetrics} />
       <FeatureRouteCards />
       <SectionSummaryPanel />
+      <PortalWorkbench
+        lanes={journeyLanes}
+        visible={visibleSurfaces}
+        hidden={hiddenSurfaces}
+        issues={iaIssues}
+        recommendations={menuRecommendations}
+        groups={policyGroups}
+        columns={blueprintColumns}
+        bundles={sourceBundles}
+      />
       <PillarBoard pillars={productPillars} />
       <NarrativeStrip />
-      <JourneyMap lanes={journeyLanes.slice(0, 2)} />
-      <PortalLegend />
       <SectionFooterCta
         href="/journey"
         label="Journey Canvas"
         title="승인 전/후/운영 루프 전체 보기"
         description="현재 앱 사용자 경험과 운영 루프를 단계별로 더 자세히 봅니다."
       />
-      <CompactPolicyHighlights groups={policyGroups} />
-      <BlueprintMap columns={blueprintColumns} />
       <SourceBundles bundles={sourceBundles} />
     </main>
   );

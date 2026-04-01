@@ -1,12 +1,12 @@
 import Link from "next/link";
 
 import {
-  JourneyMap,
   PortalHero,
-  PortalLegend,
+  PortalMiniDiagram,
   SectionFooterCta,
   SourceBundles,
 } from "@/components/portal";
+import { JourneyExplorer } from "@/components/portal-workspace";
 import { journeyLanes, sourceBundles } from "@/lib/portal-data";
 
 export default function JourneyPage() {
@@ -26,9 +26,19 @@ export default function JourneyPage() {
             </Link>
           </>
         }
+        aside={
+          <PortalMiniDiagram
+            title="Journey map preview"
+            items={[
+              { label: "Trust Gate", detail: "로그인 이후에도 승인 전까지 추천 경험은 닫혀 있습니다." },
+              { label: "Discovery", detail: "오늘의 소개와 인박스가 실제 전환 중심입니다." },
+              { label: "Conversation", detail: "수락 후에만 채팅이 열리고 24시간 규칙이 붙습니다." },
+              { label: "Moderation", detail: "안전 이슈는 운영 심사와 권한 정책으로 연결됩니다." },
+            ]}
+          />
+        }
       />
-      <PortalLegend />
-      <JourneyMap lanes={journeyLanes} />
+      <JourneyExplorer lanes={journeyLanes} />
       <SectionFooterCta
         href="/policy"
         label="Policy Matrix"

@@ -48,7 +48,11 @@ export function PortalHero({
   aside?: ReactNode;
 }) {
   return (
-    <section className="portal-hero surface portal-grid portal-grid-hero">
+    <section
+      className={`portal-hero surface portal-grid ${
+        aside ? "portal-grid-hero" : "portal-grid-single"
+      }`}
+    >
       <div>
         <span className="eyebrow">{eyebrow}</span>
         <h1 className="portal-title">{title}</h1>
@@ -57,6 +61,37 @@ export function PortalHero({
       </div>
       {aside ? <div className="portal-aside surface-muted">{aside}</div> : null}
     </section>
+  );
+}
+
+export function PortalMiniDiagram({
+  title,
+  items,
+}: {
+  title: string;
+  items: Array<{ label: string; detail: string }>;
+}) {
+  return (
+    <div className="mini-diagram">
+      <div className="mini-diagram-header">
+        <LayersIcon className="icon" />
+        <div>
+          <h2>{title}</h2>
+          <p>핵심 축을 빠르게 읽는 미니 구조도입니다.</p>
+        </div>
+      </div>
+      <div className="mini-diagram-stack">
+        {items.map((item, index) => (
+          <div className="mini-diagram-node" key={item.label}>
+            <span className="mini-diagram-index">{String(index + 1).padStart(2, "0")}</span>
+            <div>
+              <strong>{item.label}</strong>
+              <p>{item.detail}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
