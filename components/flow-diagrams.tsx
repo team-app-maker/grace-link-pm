@@ -32,6 +32,7 @@ type DiagramNodeData = {
   route: string;
   summary: string;
   screenshot?: string;
+  interactions?: string[];
   pill?: string;
   tone?: string;
 };
@@ -50,6 +51,15 @@ const ScreenshotNode = memo(function ScreenshotNode({ data }: NodeProps<Node<Dia
         <strong>{data.title}</strong>
         <code>{data.route}</code>
         <p>{data.summary}</p>
+        {data.interactions?.length ? (
+          <div className="rf-node-actions">
+            {data.interactions.map((item) => (
+              <span className="rf-node-action-chip" key={`${data.title}-${item}`}>
+                {item}
+              </span>
+            ))}
+          </div>
+        ) : null}
       </div>
       <Handle type="source" position={Position.Right} className="rf-handle" />
     </div>
@@ -128,6 +138,7 @@ function JourneyBoardCanvas({ board }: { board: JourneyBoard }) {
       route: step.route,
       summary: step.summary,
       screenshot: step.screenshot,
+      interactions: step.interactions,
       pill: step.tone ? step.tone.toUpperCase() : "STEP",
       tone: step.tone ?? "default",
     },
@@ -191,6 +202,7 @@ export function OverviewSystemCanvas() {
       route: node.route,
       summary: node.summary,
       screenshot: node.screenshot,
+      interactions: node.interactions,
       pill: node.tone.toUpperCase(),
       tone: node.tone,
     },
@@ -280,6 +292,7 @@ export function IaFlowCanvas() {
       route: item.role,
       summary: item.summary,
       screenshot: item.screenshot,
+      interactions: item.interactions,
       pill: "VISIBLE",
       tone: item.tone,
     },
@@ -295,6 +308,7 @@ export function IaFlowCanvas() {
       route: item.role,
       summary: item.summary,
       screenshot: item.screenshot,
+      interactions: item.interactions,
       pill: "HIDDEN",
       tone: item.tone,
     },
@@ -310,6 +324,7 @@ export function IaFlowCanvas() {
       route: iaBlueprint.center.role,
       summary: iaBlueprint.center.summary,
       screenshot: iaBlueprint.center.screenshot,
+      interactions: iaBlueprint.center.interactions,
       pill: "CORE",
       tone: "core",
     },
