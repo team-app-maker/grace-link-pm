@@ -18,7 +18,7 @@ import {
 } from "@xyflow/react";
 
 import { ArrowRightIcon } from "@/components/icons";
-import type { JourneyBoard, OverviewNode } from "@/lib/flow-data";
+import type { JourneyBoard } from "@/lib/flow-data";
 import { iaBlueprint, journeyBoards, overviewSystemMap } from "@/lib/flow-data";
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
@@ -47,17 +47,25 @@ const ScreenshotNode = memo(function ScreenshotNode({ data }: NodeProps<Node<Dia
         </div>
       ) : null}
       <div className="rf-node-content">
-        {data.pill ? <span className="rf-node-pill">{data.pill}</span> : null}
+        <div className="rf-node-header-row">
+          {data.pill ? <span className="rf-node-pill">{data.pill}</span> : null}
+          <code>{data.route}</code>
+        </div>
         <strong>{data.title}</strong>
-        <code>{data.route}</code>
-        <p>{data.summary}</p>
+        <div className="rf-node-summary-block">
+          <span className="rf-node-label">의미</span>
+          <p>{data.summary}</p>
+        </div>
         {data.interactions?.length ? (
-          <div className="rf-node-actions">
-            {data.interactions.map((item) => (
-              <span className="rf-node-action-chip" key={`${data.title}-${item}`}>
-                {item}
-              </span>
-            ))}
+          <div className="rf-node-actions-block">
+            <span className="rf-node-label">주요 액션</span>
+            <div className="rf-node-actions">
+              {data.interactions.map((item) => (
+                <span className="rf-node-action-chip" key={`${data.title}-${item}`}>
+                  {item}
+                </span>
+              ))}
+            </div>
           </div>
         ) : null}
       </div>
@@ -127,11 +135,11 @@ function DiagramBoardFrame({
   );
 }
 
-function JourneyBoardCanvas({ board }: { board: JourneyBoard }) {
+function buildJourneyNodes(board: JourneyBoard) {
   const nodes: Node<DiagramNodeData>[] = board.steps.map((step, index) => ({
     id: step.id,
     type: "screenshot",
-    position: { x: index * 340, y: 24 },
+    position: { x: index * 350, y: 24 },
     draggable: false,
     data: {
       title: step.title,
@@ -139,7 +147,7 @@ function JourneyBoardCanvas({ board }: { board: JourneyBoard }) {
       summary: step.summary,
       screenshot: step.screenshot,
       interactions: step.interactions,
-      pill: step.tone ? step.tone.toUpperCase() : "STEP",
+      pill: step.tone ? step.tone.toUpperCase() : `STEP ${index + 1}`,
       tone: step.tone ?? "default",
     },
   }));
@@ -149,10 +157,10 @@ function JourneyBoardCanvas({ board }: { board: JourneyBoard }) {
     source: step.id,
     target: board.steps[index + 1]?.id,
     type: "smoothstep",
-    animated: index === 0 || board.steps[index + 1]?.tone === "action",
+    animated: board.steps[index + 1]?.tone === "action",
     markerEnd: {
       type: MarkerType.ArrowClosed,
-      color: "#94a3b8",
+      color: board.steps[index + 1]?.tone === "warning" ? "#d97706" : board.steps[index + 1]?.tone === "gate" ? "#2563eb" : "#94a3b8",
       width: 18,
       height: 18,
     },
@@ -163,9 +171,15 @@ function JourneyBoardCanvas({ board }: { board: JourneyBoard }) {
           : board.steps[index + 1]?.tone === "gate"
             ? "#2563eb"
             : "#94a3b8",
-      strokeWidth: 2,
+      strokeWidth: 2.2,
     },
   }));
+
+  return { nodes, edges };
+}
+
+function JourneyBoardCanvas({ board }: { board: JourneyBoard }) {
+  const { nodes, edges } = buildJourneyNodes(board);
 
   return (
     <DiagramBoardFrame
@@ -173,21 +187,113 @@ function JourneyBoardCanvas({ board }: { board: JourneyBoard }) {
       title={board.summary}
       sourceLabel={board.sourceLabel}
       sourceHref={board.sourceHref}
-      width={`${Math.max(board.steps.length * 340, 1080)}px`}
-      height={280}
+      width={`${Math.max(board.steps.length * 350, 1120)}px`}
+      height={420}
       nodes={nodes}
       edges={edges}
     />
   );
 }
 
+function MobileFlowCard({
+  title,
+  route,
+  summary,
+  interactions,
+  screenshot,
+  tone,
+  index,
+}: {
+  title: string;
+  route: string;
+  summary: string;
+  interactions: string[];
+  screenshot: string;
+  tone?: string;
+  index: number;
+}) {
+  return (
+    <article className="mobile-flow-card" data-tone={tone ?? "default"}>
+      <div className="mobile-flow-card-head">
+        <span className="mobile-flow-index">{String(index + 1).padStart(2, "0")}</span>
+        <div>
+          <strong>{title}</strong>
+          <code>{route}</code>
+        </div>
+      </div>
+      <div className="mobile-flow-thumb-wrap">
+        <img className="mobile-flow-thumb" src={withBasePath(screenshot)} alt={title} />
+      </div>
+      <div className="mobile-flow-copy">
+        <span className="mobile-flow-label">의미</span>
+        <p>{summary}</p>
+      </div>
+      <div className="mobile-flow-copy">
+        <span className="mobile-flow-label">주요 액션</span>
+        <div className="mobile-flow-actions">
+          {interactions.map((item) => (
+            <span className="mobile-flow-chip" key={`${title}-${item}`}>
+              {item}
+            </span>
+          ))}
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function MobileJourneyBoard({ board }: { board: JourneyBoard }) {
+  return (
+    <section className="mobile-board surface">
+      <div className="diagram-board-header">
+        <div>
+          <span className="eyebrow">{board.title}</span>
+          <h2>{board.summary}</h2>
+        </div>
+        <Link className="workspace-source-link" href={board.sourceHref}>
+          <span>{board.sourceLabel}</span>
+          <ArrowRightIcon className="icon" />
+        </Link>
+      </div>
+      <div className="mobile-flow-line">
+        {board.steps.map((step, index) => (
+          <div className="mobile-flow-segment" key={`${board.id}-${step.id}`}>
+            <MobileFlowCard
+              index={index}
+              title={step.title}
+              route={step.route}
+              summary={step.summary}
+              interactions={step.interactions}
+              screenshot={step.screenshot}
+              tone={step.tone}
+            />
+            {index < board.steps.length - 1 ? (
+              <div className="mobile-flow-connector" aria-hidden="true">
+                <span />
+                <ArrowRightIcon className="icon" />
+              </div>
+            ) : null}
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function JourneyFlowCanvas() {
   return (
-    <section className="diagram-stack">
-      {journeyBoards.map((board) => (
-        <JourneyBoardCanvas board={board} key={board.id} />
-      ))}
-    </section>
+    <>
+      <section className="diagram-stack diagram-desktop-only">
+        {journeyBoards.map((board) => (
+          <JourneyBoardCanvas board={board} key={board.id} />
+        ))}
+      </section>
+      <section className="flow-mobile-stack diagram-mobile-only">
+        {journeyBoards.map((board) => (
+          <MobileJourneyBoard board={board} key={`${board.id}-mobile`} />
+        ))}
+      </section>
+    </>
   );
 }
 
@@ -268,16 +374,55 @@ export function OverviewSystemCanvas() {
   ];
 
   return (
-    <DiagramBoardFrame
-      eyebrow={overviewSystemMap.title}
-      title={overviewSystemMap.summary}
-      sourceLabel={overviewSystemMap.sourceLabel}
-      sourceHref={overviewSystemMap.sourceHref}
-      width="1520px"
-      height={760}
-      nodes={nodes}
-      edges={edges}
-    />
+    <>
+      <div className="diagram-desktop-only">
+        <DiagramBoardFrame
+          eyebrow={overviewSystemMap.title}
+          title={overviewSystemMap.summary}
+          sourceLabel={overviewSystemMap.sourceLabel}
+          sourceHref={overviewSystemMap.sourceHref}
+          width="1520px"
+          height={820}
+          nodes={nodes}
+          edges={edges}
+        />
+      </div>
+      <section className="flow-mobile-stack diagram-mobile-only">
+        <section className="mobile-board surface">
+          <div className="diagram-board-header">
+            <div>
+              <span className="eyebrow">{overviewSystemMap.title}</span>
+              <h2>{overviewSystemMap.summary}</h2>
+            </div>
+            <Link className="workspace-source-link" href={overviewSystemMap.sourceHref}>
+              <span>{overviewSystemMap.sourceLabel}</span>
+              <ArrowRightIcon className="icon" />
+            </Link>
+          </div>
+          <div className="mobile-flow-line">
+            {overviewSystemMap.nodes.map((node, index) => (
+              <div className="mobile-flow-segment" key={node.id}>
+                <MobileFlowCard
+                  index={index}
+                  title={node.title}
+                  route={node.route}
+                  summary={node.summary}
+                  interactions={node.interactions}
+                  screenshot={node.screenshot}
+                  tone={node.tone}
+                />
+                {index < overviewSystemMap.nodes.length - 1 ? (
+                  <div className="mobile-flow-connector" aria-hidden="true">
+                    <span />
+                    <ArrowRightIcon className="icon" />
+                  </div>
+                ) : null}
+              </div>
+            ))}
+          </div>
+        </section>
+      </section>
+    </>
   );
 }
 
@@ -352,15 +497,82 @@ export function IaFlowCanvas() {
   ];
 
   return (
-    <DiagramBoardFrame
-      eyebrow="IA Blueprint"
-      title="visible surface와 hidden critical route를 연결한 구조도"
-      sourceLabel={iaBlueprint.sourceLabel}
-      sourceHref={iaBlueprint.sourceHref}
-      width="1280px"
-      height={760}
-      nodes={nodes}
-      edges={edges}
-    />
+    <>
+      <div className="diagram-desktop-only">
+        <DiagramBoardFrame
+          eyebrow="IA Blueprint"
+          title="visible surface와 hidden critical route를 연결한 구조도"
+          sourceLabel={iaBlueprint.sourceLabel}
+          sourceHref={iaBlueprint.sourceHref}
+          width="1280px"
+          height={820}
+          nodes={nodes}
+          edges={edges}
+        />
+      </div>
+      <section className="flow-mobile-stack diagram-mobile-only">
+        <section className="mobile-board surface">
+          <div className="diagram-board-header">
+            <div>
+              <span className="eyebrow">IA Blueprint</span>
+              <h2>visible / hidden / core를 모바일에서 읽기 쉬운 세로 구조로 재정렬</h2>
+            </div>
+            <Link className="workspace-source-link" href={iaBlueprint.sourceHref}>
+              <span>{iaBlueprint.sourceLabel}</span>
+              <ArrowRightIcon className="icon" />
+            </Link>
+          </div>
+          <div className="mobile-ia-layout">
+            <div className="mobile-ia-group">
+              <div className="mobile-ia-heading">
+                <strong>Visible surfaces</strong>
+              </div>
+              <div className="mobile-ia-stack">
+                {iaBlueprint.visible.map((item, index) => (
+                  <MobileFlowCard
+                    key={item.id}
+                    index={index}
+                    title={item.title}
+                    route={item.role}
+                    summary={item.summary}
+                    interactions={item.interactions}
+                    screenshot={item.screenshot}
+                    tone={item.tone}
+                  />
+                ))}
+              </div>
+            </div>
+            <MobileFlowCard
+              index={0}
+              title={iaBlueprint.center.title}
+              route={iaBlueprint.center.role}
+              summary={iaBlueprint.center.summary}
+              interactions={iaBlueprint.center.interactions}
+              screenshot={iaBlueprint.center.screenshot}
+              tone={iaBlueprint.center.tone}
+            />
+            <div className="mobile-ia-group">
+              <div className="mobile-ia-heading">
+                <strong>Hidden critical routes</strong>
+              </div>
+              <div className="mobile-ia-stack">
+                {iaBlueprint.hidden.map((item, index) => (
+                  <MobileFlowCard
+                    key={item.id}
+                    index={index}
+                    title={item.title}
+                    route={item.role}
+                    summary={item.summary}
+                    interactions={item.interactions}
+                    screenshot={item.screenshot}
+                    tone={item.tone}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      </section>
+    </>
   );
 }
