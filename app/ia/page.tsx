@@ -1,13 +1,9 @@
 import Link from "next/link";
 
-import { PortalHero, PortalMiniDiagram, SectionFooterCta, SourceBundles } from "@/components/portal";
-import { IaExplorer } from "@/components/portal-workspace";
+import { PortalHero, SectionFooterCta, SourceBundles } from "@/components/portal";
+import { IaFlowCanvas } from "@/components/flow-diagrams";
 import {
-  hiddenSurfaces,
-  iaIssues,
-  menuRecommendations,
   sourceBundles,
-  visibleSurfaces,
 } from "@/lib/portal-data";
 
 export default function IaPage() {
@@ -27,24 +23,8 @@ export default function IaPage() {
             </Link>
           </>
         }
-        aside={
-          <PortalMiniDiagram
-            title="IA split view"
-            items={[
-              { label: "Visible Tabs", detail: "사용자가 즉시 보는 4개 탭 표면" },
-              { label: "Hidden Core", detail: "인박스·보관함·스토어 같은 핵심 동선" },
-              { label: "Friction", detail: "행동 허브 부재와 메뉴 과밀이 문제" },
-              { label: "Target", detail: "홈/소개/인박스/채팅/내 정보 구조로 재정렬" },
-            ]}
-          />
-        }
       />
-      <IaExplorer
-        visible={visibleSurfaces}
-        hidden={hiddenSurfaces}
-        issues={iaIssues}
-        recommendations={menuRecommendations}
-      />
+      <IaFlowCanvas />
       <SectionFooterCta
         href="/docs/03-mobile/docs/ssot/home-redesign-and-copy-strategy/"
         label="Next Design Work"
