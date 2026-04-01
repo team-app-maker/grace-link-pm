@@ -215,17 +215,24 @@ img {
 
 .top-nav {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 0.5rem;
   justify-content: center;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
 
 .top-nav a {
+  flex: 0 0 auto;
   padding: 0.55rem 0.8rem;
   border-radius: 999px;
   color: var(--color-text-muted);
   font-weight: 600;
   transition: background-color 200ms ease, color 200ms ease;
+}
+
+.top-nav::-webkit-scrollbar {
+  display: none;
 }
 
 .top-nav a:hover {
@@ -856,6 +863,7 @@ img {
 
   .top-nav {
     justify-content: flex-start;
+    padding-bottom: 0.15rem;
   }
 
   .header-search-slot {
@@ -884,6 +892,26 @@ img {
 
   .site-header-inner {
     width: min(calc(100% - 1rem), var(--content-max-width));
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.8rem;
+  }
+
+  .top-nav {
+    grid-column: 1 / -1;
+    order: 2;
+    gap: 0.45rem;
+    padding-top: 0.1rem;
+    padding-bottom: 0.2rem;
+  }
+
+  .top-nav a {
+    padding: 0.48rem 0.72rem;
+    font-size: 0.92rem;
+  }
+
+  .header-search-slot {
+    grid-column: 1 / -1;
+    order: 3;
   }
 
   .hero-panel,
@@ -905,6 +933,15 @@ img {
     display: none;
   }
 
+  .brand-link {
+    gap: 0.7rem;
+  }
+
+  .brand-mark {
+    width: 2.35rem;
+    height: 2.35rem;
+  }
+
   .directory-heading {
     flex-direction: column;
   }
@@ -921,6 +958,10 @@ img {
   display: grid;
   gap: 1.25rem;
   padding-top: 1.25rem;
+}
+
+.home-overview-band {
+  padding: 1.1rem;
 }
 
 .portal-subpage .portal-hero {

@@ -19,8 +19,8 @@ export default function HomePage() {
     <main id="main-content" className="page-shell portal-home">
       <PortalHero
         eyebrow="GraceLink PM Portal"
-        title="기획 문서를 나열하지 말고, 제품 시스템을 한 화면에서 보여주는 허브"
-        description="이제 이 웹은 raw markdown 목록이 아니라, GraceLink의 user flow, IA/menu structure, policy system, 그리고 source-of-truth 문서를 한 개의 제품 포털로 묶어 보여줍니다."
+        title="문서보다 먼저, GraceLink 제품 시스템을 읽게 만드는 PM 포털"
+        description="신뢰 게이트, 탐색 루프, 응답 구조, 정책 축, 운영 흐름을 먼저 보여주고 필요한 근거 문서는 그다음에 열게 만드는 형태로 정리했습니다."
         actions={
           <>
             <Link className="button button-primary" href="/journey">
@@ -34,8 +34,18 @@ export default function HomePage() {
         aside={<HeroAnswerPanel />}
       />
 
-      <MetricStrip metrics={portalMetrics} />
-      <FeatureRouteCards />
+      <section className="surface home-overview-band">
+        <div className="section-heading">
+          <div>
+            <span className="eyebrow">Overview shortcuts</span>
+            <h2>지금 이 제품을 판단할 때 먼저 봐야 할 신호와 진입점</h2>
+          </div>
+          <p>핵심 수치와 deep-dive entry를 한 영역으로 묶어 첫 화면 밀도를 낮췄습니다.</p>
+        </div>
+        <MetricStrip metrics={portalMetrics} />
+        <FeatureRouteCards />
+      </section>
+
       <OverviewSystemCanvas />
       <SectionFooterCta
         href="/journey"
