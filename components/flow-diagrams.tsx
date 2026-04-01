@@ -7,7 +7,6 @@ import Link from "next/link";
 import { memo } from "react";
 import {
   Background,
-  Controls,
   type Edge,
   Handle,
   MarkerType,
@@ -127,7 +126,6 @@ function DiagramBoardFrame({
             proOptions={{ hideAttribution: true }}
           >
             <Background gap={28} size={1} color="rgba(148,163,184,0.15)" />
-            <Controls showZoom={false} showFitView={false} showInteractive={false} />
           </ReactFlow>
         </div>
       </div>

@@ -31,8 +31,11 @@ export default function HomePage() {
             </Link>
           </>
         }
-        aside={<HeroAnswerPanel />}
       />
+
+      <section className="surface home-answer-band">
+        <HeroAnswerPanel />
+      </section>
 
       <section className="surface home-overview-band">
         <div className="section-heading">
